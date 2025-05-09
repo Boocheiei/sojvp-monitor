@@ -19,6 +19,7 @@ unsigned int pm10 = 0, last_pm10 = 0;
 
 // Volatile Organic Compound (VOC) sensor reading
 int voc = 0;
+int eCO2 = 0;  // Variable to store eCO2 value
 
 void setup() {
   Serial.begin(9600);
@@ -81,7 +82,8 @@ void readSensorData() {
   // Read data from the CCS811 VOC sensor
   if (ccs.available()) {
     if (!ccs.readData()) {
-      voc = ccs.getTVOC();  // Get VOC concentration in ppb
+      voc = ccs.getTVOC();   // Get VOC concentration in ppb
+      eCO2 = ccs.geteCO2();  // Get eCO2 concentration in ppm
     }
   }
 }
@@ -93,6 +95,7 @@ void displayStaticText() {
   ucg.setPrintPos(5, 70); ucg.print("PM2.5 :");  // Display static label for PM2.5
   ucg.setPrintPos(5, 90); ucg.print("PM10  :");  // Display static label for PM10
   ucg.setPrintPos(5, 110); ucg.print("VOC   :");  // Display static label for VOC
+  ucg.setPrintPos(5, 130); ucg.print("eCO2  :");  // Display static label for eCO2
 }
 
 void displayPMValues() {
@@ -123,6 +126,14 @@ void displayPMValues() {
   ucg.setPrintPos(60, 110);     // Set position to display VOC
   ucg.print(voc);               // Display VOC value
   ucg.print(" ppb");            // Display VOC unit (ppb)
+
+  // Display eCO2 value
+  ucg.setColor(0, 0, 0);         // Set background color to black for eCO2 display
+  ucg.drawBox(60, 120, 70, 15);  // Draw a box for the eCO2 value
+  ucg.setColor(255, 255, 255);   // Set text color to white
+  ucg.setPrintPos(60, 130);      // Set position to display eCO2
+  ucg.print(eCO2);               // Display eCO2 value
+  ucg.print(" ppm");             // Display eCO2 unit (ppm)
 }
 
 void animateValueChange(int x, int y, int oldVal, int newVal) {
